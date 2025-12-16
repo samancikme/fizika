@@ -1,0 +1,33 @@
+services:
+  - type: worker
+    name: fizika-test-bot
+    runtime: python
+    region: frankfurt
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install --no-cache-dir --prefer-binary -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: PIP_NO_BINARY
+        value: ""
+      - key: BOT_TOKEN
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: DB_NAME
+        value: fizika_test_bot
+      - key: ADMIN_IDS
+        sync: false
+      - key: DEFAULT_QUESTION_COUNT
+        value: "10"
+      - key: DEFAULT_TIME_LIMIT
+        value: "30"
+      - key: PIN_EXPIRY_DAYS
+        value: "7"
+      - key: MAX_IMAGE_SIZE
+        value: "50000"
+      - key: MAX_IMAGE_DIMENSION
+        value: "800"

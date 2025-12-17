@@ -49,6 +49,27 @@ PIN_EXPIRY_DAYS = int(os.getenv("PIN_EXPIRY_DAYS", 7))
 MAX_IMAGE_SIZE = int(os.getenv("MAX_IMAGE_SIZE", 50000))
 MAX_IMAGE_DIMENSION = int(os.getenv("MAX_IMAGE_DIMENSION", 800))
 
+app = FastAPI()
+
+WEBHOOK_PATH = "/webhook"
+WEBHOOK_URL = f"https://YOUR-SERVICE.onrender.com{WEBHOOK_PATH}"
+
+
+async def on_startup():
+    await main()
+    await bot.set_webhook(WEBHOOK_URL)
+    print("🌐 Webhook o‘rnatildi")
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    await bot.delete_webhook()
+    print("🛑 Webhook o‘chirildi")
+
+@app.post(WEBHOOK_PATH)
+async def telegram_webhook(update: dict):
+    telegram_update = Update(**update)
+    await dp.feed_update(bot, telegram_update)
+
 if not BOT_TOKEN:
     raise ValueError("❌ BOT_TOKEN topilmadi!")
 
@@ -1988,42 +2009,24 @@ async def main():
             await client.admin.command('ping')
             print("✅ MongoDB ulandi!")
             break
-        except Exception as e:
+        except Exception:
             print(f"⚠️ Urinish {attempt + 1}/3")
             if attempt == 2:
                 print("❌ Ulanmadi!")
                 return
             await asyncio.sleep(5)
-    
+
     try:
         await questions_col.create_index([("grade", 1), ("topic", 1)])
         await results_col.create_index([("user_id", 1), ("completed_at", -1)])
-        await results_col.create_index("completed_at")  # YANGI
+        await results_col.create_index("completed_at")
         await pins_col.create_index("pin", unique=True)
-        await pins_col.create_index("expires_at")  # YANGI
+        await pins_col.create_index("expires_at")
         await images_col.create_index("hash", unique=True)
         print("✅ Indexlar yaratildi!")
     except Exception as e:
         print(f"⚠️ Index: {e}")
-    
-    dp.include_router(router)
-    
-    # Statistika
-    total_q = await questions_col.count_documents({})
-    total_r = await results_col.count_documents({})
-    total_img = await images_col.count_documents({})
-    
-    print(f"🚀 Bot ishga tushdi!")
-    print(f"👤 Adminlar: {ADMIN_IDS}")
-    print(f"📊 Savollar: {total_q}")
-    print(f"📝 Natijalar: {total_r}")
-    print(f"🖼 Rasmlar: {total_img}")
-    print("\n✅ Bot ishlayapti...\n")
-    
-    await dp.start_polling(bot)
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\n👋 Bot to'xtatildi!")
+    dp.include_router(router)
+
+    print("🚀 Bot ishga tayyor!")

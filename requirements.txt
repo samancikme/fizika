@@ -11,3 +11,5 @@ charset-normalizer==3.3.2
 idna==3.7
 multidict==6.0.5
 yarl==1.9.4
+fastapi==0.110.0
+uvicorn==0.29.0

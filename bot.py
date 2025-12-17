@@ -34,6 +34,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
+from fastapi import FastAPI
+
 
 from PIL import Image as PILImage
 
@@ -52,7 +54,7 @@ MAX_IMAGE_DIMENSION = int(os.getenv("MAX_IMAGE_DIMENSION", 800))
 app = FastAPI()
 
 WEBHOOK_PATH = "/webhook"
-WEBHOOK_URL = f"https://YOUR-SERVICE.onrender.com{WEBHOOK_PATH}"
+WEBHOOK_URL = f"https://fizika-5tm6.onrender.com/webhook"
 
 
 async def on_startup():

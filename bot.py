@@ -12,6 +12,7 @@ import base64
 
 from dotenv import load_dotenv
 load_dotenv()
+from fastapi import FastAPI
 
 from aiogram import Bot, Dispatcher, Router, F
 from aiogram.types import (
@@ -34,7 +35,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
-from fastapi import FastAPI
 
 
 from PIL import Image as PILImage
